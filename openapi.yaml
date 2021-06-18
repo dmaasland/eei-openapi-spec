@@ -13,12 +13,522 @@
         type: http
         scheme: bearer
         bearerFormat: JWT
+
+    schemas:
+      Authenticate:
+        type: object
+        properties:
+          username:
+            type: string
+          pasword:
+            type: string
+            format: password
+          domain:
+            type: boolean
+
+      X-Security-Token:
+        type: string
+        example: eyJhbGciOi[..]ziJSUGusY5kAI
+
+      Detections:
+        type: object
+        properties:
+          count:
+            type: integer
+            nullable: true
+          value:
+            type: array
+            items:
+              type: object
+              properties:
+                computerId:
+                  type: integer
+                  
+                computerName:
+                  type: string
+                  format: hostname
+                  
+                computerUuid:
+                  type: string
+                  format: uuid
+                  
+                creationTime:
+                  type: string
+                  format: date-time
+                  
+                id:
+                  type: integer
+                  
+                moduleId:
+                  type: integer
+                  
+                moduleLgAge:
+                  type: integer
+                  
+                moduleLgPopularity:
+                  type: integer
+                  
+                moduleLgReputation:
+                  type: integer
+                  minimum: 1
+                  maximum: 9
+                  
+                moduleName:
+                  type: string
+                  
+                moduleSha1:
+                  type: string
+
+                moduleSignatureType:
+                  type: integer
+                  enum: [60, 70, 75, 80, 90]
+                  
+                moduleSigner:
+                  type: string
+
+                note:
+                  type: string
+
+                priority:
+                  type: integer
+                  maximum: 3
+
+                processCommandLine:
+                  type: string
+
+                processId:
+                  type: integer
+
+                processUser:
+                  type: string
+
+                resolved:
+                  type: boolean
+
+                ruleId:
+                  type: integer
+
+                ruleName:
+                  type: string
+
+                ruleUuid:
+                  type: string
+                  format: uuid
+
+                severity:
+                  type: integer
+                  minimum: 1
+                  maximum: 3
+                
+                severityScore:
+                  type: integer
+                  maximum: 100
+
+                threatName:
+                  type: string
+
+                threatUri:
+                  type: string
+                  format: uri
+                
+                type:
+                  maximum: 8
+
+                uuid:
+                  type: string
+                  format: uuid
+
+      Detection:
+        type: object
+        properties:
+          DETECTION:
+            type: object
+            properties:
+              computerId:
+                  type: integer
+                  
+              computerName:
+                type: string
+                format: hostname
+                
+              computerUuid:
+                type: string
+                format: uuid
+                
+              creationTime:
+                type: string
+                format: date-time
+
+              event:
+                type: string
+
+              handled:
+                type: integer
+                enum: [0, 1]
+
+              id:
+                type: integer
+
+              moduleFirstSeenLocally:
+                type: string
+                format: date-time
+
+              moduleId:
+                type: integer
+
+              moduleLastExecutedLocally:
+                type: string
+                format: date-time
+
+              moduleLgAge:
+                type: integer
+                
+              moduleLgPopularity:
+                type: integer
+                
+              moduleLgReputation:
+                type: integer
+                enum: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                
+              moduleName:
+                type: string
+                
+              moduleSha1:
+                type: string
+
+              moduleSignatureType:
+                type: integer
+                
+              moduleSigner:
+                type: string
+
+              note:
+                type: string
+
+              priority:
+                type: integer
+                enum: [0, 1, 2, 3]
+
+              processCommandLine:
+                type: string
+
+              processId:
+                type: integer
+
+              processPath:
+                type: string
+
+              processUser:
+                type: string
+
+              resolved:
+                type: boolean
+
+              ruleName:
+                type: string
+
+              ruleUuid:
+                type: string
+                format: uuid                      
+
+              severity:
+                type: integer
+              
+              severityScore:
+                type: integer
+
+              threatName:
+                type: string
+
+              threatUri:
+                type: string
+                format: uri
+              
+              type:
+                enum: [0, 1, 2, 3, 4, 5, 6, 7]
+
+              uuid:
+                type: string
+                format: uuid
+
+      DetectionUpdateRequest:
+        type: object
+        properties:
+          resolved:
+            type: boolean
+
+          priority:
+            type: integer
+            maximum: 3
+
+          note:
+            type: string
+
+      ExecutableBlock:
+        type: object
+        properties:
+          clean:
+            type: boolean
+          note:
+            type: string
+
+      ExecutableUnblock:
+        type: object
+        properties:
+          note:
+            type: string
+
+      RuleResponse:
+        type: object
+        properties:
+          RULE:
+            type: object
+            properties:
+              body:
+                type: string
+                format: xml
+
+              enabled:
+                type: boolean
+
+              id:
+                type: integer
+
+              name:
+                type: string
+
+              severity:
+                type: integer
+                enum: [1, 2, 3]
+
+              severityScore:
+                type: integer
+                maximum: 100
+
+              uuid:
+                type: string
+                format: uuid
+
+      UpdateRule:
+        type: object
+        properties:
+          enabled:
+            type: boolean
+
+    headers:
+      X-Security-Token:
+        description: Authentication token
+        schema:
+          $ref: '#/components/schemas/X-Security-Token'
+
+    examples:
+      Authenticate:
+        value:
+          username: Administrator
+          password: eraadmin
+          domain: false
+
+      RuleResponse:
+        value:
+          RULE:
+            body: '<?xml version="1.0" encoding="utf-8"?><rule><description><os>Windows</os><mitreattackid/><explanation/><maliciousCauses/><benignCauses/><recommendedActions/><name>Script interpreters detection (PowerShell/wscript) [X9901]</name><category>Special/system rules</category><guid>3FF756E1-6B54-4729-AE0D-318181D751A5</guid></description><definition><process><operator type="OR"><condition component="FileItem" property="FileName" condition="is" value="wscript.exe"/><condition component="FileItem" property="FileName" condition="is" value="powershell.exe"/><condition component="Module" property="OriginalFileName" condition="starts" value="wscript.exe"/><condition component="Module" property="OriginalFileName" condition="starts" value="powershell.exe"/></operator></process></definition><action>MarkAsScript</action></rule>'
+            enabled: true
+            id: 594
+            name: 'Script interpreters detection (PowerShell/wscript) [X9901]'
+            severity: 2
+            severityScore: 60
+            uuid: 3ff756e1-6b54-4729-ae0d-318181d751a5
+
+      UpdateRule:
+        value:
+          enabled: false
+
+      DetectionUpdate:
+        value:
+          resolved: true
+          priority: 0
+          note: 'False positive'
+
+      ExecutableBlock:
+        value:
+          clean: true
+          note: 'Ransomware'
+
+      ExecutableUnblock:
+        value:
+          note: 'Investigated, clean'
+
+    requestBodies:
+      Authenticate:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Authenticate'
+            examples:
+              Authenticate:
+                $ref: '#/components/examples/Authenticate'
+
+      UpdateRule:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRule'
+            examples:
+              UpdateRule:
+                $ref: '#/components/examples/UpdateRule'
+
+      DetectionUpdate:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DetectionUpdateRequest'
+
+      ExecutableBlock:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecutableBlock'
+            examples:
+              ExecutableBlock:
+                $ref: '#/components/examples/ExecutableBlock'
+
+      ExecutableUnblock:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecutableUnblock'
+            examples:
+              ExecutableUnblock:
+                $ref: '#/components/examples/ExecutableUnblock'
+
     responses:
       UnauthorizedError:
         description: Access token is missing or invalid
 
       ForbiddenError:
         description: Insufficient permissions to perform action
+
+      NoContent:
+        description: No content, indicates success
+
+      Authenticate:
+        description: OK
+        headers:
+          X-Security-Token:
+            $ref: '#/components/headers/X-Security-Token'
+
+      Detections:
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Detections'
+
+      Detection:
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Detection'
+
+      Rule:
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RuleResponse'
+            examples:
+              RuleResponse:
+                $ref: '#/components/examples/RuleResponse'
+
+    parameters:
+      PaginationTop:
+        name: '$top'
+        description: system query option requests the number of items in the queried collection to be included in the result
+        in: query
+        allowEmptyValue: false
+        required: false
+        schema:
+          type: integer
+
+      PaginationSkip:
+        name: '$skip'
+        description: system query option requests the number of items in the queried collection that are to be skipped and not included in the result
+        in: query
+        allowEmptyValue: false
+        required: false
+        schema:
+          type: integer
+
+      PaginationCount:
+        name: '$count'
+        description: system query option allows clients to request a count of the matching resources included with the resources in the response. if set to $count=1, the number of detections is returned.
+        in: query
+        allowEmptyValue: false
+        required: false
+        schema:
+          type: integer
+          enum:
+          - 0
+          - 1
+
+      PaginationOrderBy:
+        name: '$orderBy'
+        description: system query option allows clients to request resources in either ascending order using asc or descending order using desc. If not specified the order is in ascending way
+        in: query
+        allowEmptyValue: false
+        required: false
+        schema:
+          type: string
+
+      PaginationFilter:
+        name: '$filter'
+        description: system query option allows clients to filter a collection of resources that are addressed by a request URL. The query supports the following operators eq, ne, gt, ge, lt, le, and, or, and (). Operators can be combined with values to filter data. For instance, “resolved eq 0” will report only unresolved detections.
+        in: query
+        allowEmptyValue: false
+        required: false
+        schema:
+          type: string
+
+      IdOrUuid:
+        name: 'id'
+        description: ID or UUID
+        in: path
+        required: true
+        allowEmptyValue: false
+        schema:
+          type: string
+
+      IdTypeUuid:
+        name: $idType
+        description: if $idType=uuid {id} in URL is interpreted as uuid
+        in: query
+        required: false
+        allowEmptyValue: false
+        schema:
+          type: string
+          enum:
+          - uuid
+
+      IdOrSha1:
+        name: 'id'
+        description: ID or SHA1
+        in: path
+        required: true
+        allowEmptyValue: false
+        schema:
+          type: string
+
+      IdTypeSha1:
+        name: $idType
+        description: if $idType=sha1 {id} in URL is interpreted as SHA1
+        in: query
+        required: false
+        allowEmptyValue: false
+        schema:
+          type: string
+          enum:
+          - sha1
 
   security:
     - bearerAuth: []
@@ -35,79 +545,32 @@
       put:
         tags: 
         - Authentication
-        summary: Authenticate
+        summary: Authentication
         security: []
-        description: |
-          Obtain an authentication token from the API to be used on
-          subsequent requests.
         requestBody:
           required: true
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  password:
-                    type: string
-                    format: password
-                  domain:
-                    type: boolean
-                  username:
-                    type: string
-              example:
-                username: username
-                password: password
-                domain: false
+          $ref: '#/components/requestBodies/Authenticate'
                   
         responses:
           '200':
-            description: OK
-            headers:
-              X-Security-Token:
-                description: Authentication token
-                schema:
-                  type: string
-                  example: eyJhbGciOi[..]ziJSUGusY5kAI
-
+            $ref: '#/components/responses/Authenticate'
+            
           '401':
             $ref: '#/components/responses/UnauthorizedError'
 
       post:
         tags: 
         - Authentication
-        summary: Authenticate
+        summary: Authentication
         security: []
-        description: |
-          Obtain an authentication token from the API to be used on
-          subsequent requests.
         requestBody:
           required: true
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  password:
-                    type: string
-                  domain:
-                    type: boolean
-                  username:
-                    type: string
-              example:
-                username: username
-                password: password
-                domain: false
+          $ref: '#/components/requestBodies/Authenticate'
                   
         responses:
           '200':
-            description: OK
-            headers:
-              X-Security-Token:
-                description: Authentication token
-                schema:
-                  type: string
-                  example: eyJhbGciOi[..]ziJSUGusY5kAI
-
+            $ref: '#/components/responses/Authenticate'
+            
           '401':
             $ref: '#/components/responses/UnauthorizedError'
 
@@ -115,174 +578,17 @@
       get:
         tags: 
         - Detections
-        summary: List detections
-        description: List all detections
+        summary: List of detections
         parameters:
-          - name: '$top'
-            description: |
-              system query option requests the number of items in the queried
-              collection to be included in the result
-            in: query
-            allowEmptyValue: false
-            required: false
-            schema:
-              type: integer
-              
-          - name: '$skip'
-            description: |
-              system query option requests the number of items in the queried
-              collection that are to be skipped and not included in the result
-            in: query
-            allowEmptyValue: false
-            required: false
-            schema:
-              type: integer
-              
-          - name: '$count'
-            description: |
-              system query option allows clients to request a count of the 
-              matching resources included with the resources in the response. 
-              if set to $count=1, the number of detections is returned.
-            in: query
-            allowEmptyValue: false
-            required: false
-            schema:
-              type: integer
-              enum:
-              - 0
-              - 1
-              
-          - name: '$orderBy'
-            description: |
-              system query option allows clients to request resources in either
-              ascending order using asc or descending order using desc. If not
-              specified the order is in ascending way
-            in: query
-            allowEmptyValue: false
-            required: false
-            schema:
-              type: string
-              
-          - name: '$filter'
-            description: |
-              system query option allows clients to filter a collection of
-              resources that are addressed by a request URL. The query supports
-              the following operators eq, ne, gt, ge, lt, le, and, or, and ().
-              Operators can be combined with values to filter data. For instance,
-              “resolved eq 0” will report only unresolved detections.
-            in: query
-            allowEmptyValue: false
-            required: false
-            schema:
-              type: string
+          - $ref: '#/components/parameters/PaginationTop'
+          - $ref: '#/components/parameters/PaginationSkip'
+          - $ref: '#/components/parameters/PaginationCount'
+          - $ref: '#/components/parameters/PaginationOrderBy'
+          - $ref: '#/components/parameters/PaginationFilter'
               
         responses:
           '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    count:
-                      type: integer
-                      nullable: true
-                    value:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          computerId:
-                            type: integer
-                            
-                          computerName:
-                            type: string
-                            format: hostname
-                            
-                          computerUuid:
-                            type: string
-                            format: uuid
-                            
-                          creationTime:
-                            type: string
-                            format: date-time
-                            
-                          id:
-                            type: integer
-                            
-                          moduleId:
-                            type: integer
-                            
-                          moduleLgAge:
-                            type: integer
-                            
-                          moduleLgPopularity:
-                            type: integer
-                            
-                          moduleLgReputation:
-                            type: integer
-                            enum: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-                            
-                          moduleName:
-                            type: string
-                            
-                          moduleSha1:
-                            type: string
-
-                          moduleSignatureType:
-                            type: integer
-                            
-                          moduleSigner:
-                            type: string
-
-                          note:
-                            type: string
-
-                          priority:
-                            type: integer
-                            enum: [0, 1, 2, 3]
-
-                          processCommandLine:
-                            type: string
-
-                          processId:
-                            type: integer
-
-                          processUser:
-                            type: string
-
-                          resolved:
-                            type: boolean
-
-                          ruleId:
-                            type: integer
-
-                          ruleName:
-                            type: string
-
-                          ruleUuid:
-                            type: string
-                            format: uuid
-
-                          severity:
-                            type: integer
-                          
-                          severityScore:
-                            type: integer
-
-                          threatName:
-                            type: string
-
-                          threatUri:
-                            type: string
-                            format: uri
-                          
-                          type:
-                            enum: [0, 1, 2, 3, 4, 5, 6, 7]
-
-                          uuid:
-                            type: string
-                            format: uuid
+            $ref: '#/components/responses/Detections'
 
           '401':
             $ref: '#/components/responses/UnauthorizedError'
@@ -292,25 +598,94 @@
         tags: 
         - Detections
         summary: Get detection details
-        description: Get detection details
         parameters:
-        - name: 'id'
-          description: Id (or uuid) of the detection to get
-          in: path
+        - $ref: '#/components/parameters/IdOrUuid'
+        - $ref: '#/components/parameters/IdTypeUuid'
+
+        responses:
+          '200':
+            $ref: '#/components/responses/Detection'
+
+          '401':
+            $ref: '#/components/responses/UnauthorizedError'
+
+      patch:
+        tags: 
+        - Detections
+        summary: Update detection
+        parameters:
+        - $ref: '#/components/parameters/IdOrUuid'
+        - $ref: '#/components/parameters/IdTypeUuid'
+
+        requestBody:
           required: true
-          allowEmptyValue: false
-          schema:
-            type: string
-            
-        - name: '$idType'
-          description: if $idType=uuid {id} in URL is interpreted as uuid of a detection
-          in: query
-          allowEmptyValue: false
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetectionUpdateRequest'
+              examples:
+                DetectionUpdate:
+                  $ref: '#/components/examples/DetectionUpdate'
+
+        responses:
+          '204':
+            $ref: '#/components/responses/NoContent'
+
+          '401':
+            $ref: '#/components/responses/UnauthorizedError'
+
+    /api/v1/executables/{id}/block:
+      post:
+        tags:
+        - Remediation
+        summary: Block an executable
+        parameters:
+        - $ref: '#/components/parameters/IdOrSha1'
+        - $ref: '#/components/parameters/IdTypeSha1'
+
+        requestBody:
           required: false
-          schema:
-            type: string
-            enum:
-              - uuid
+          $ref: '#/components/requestBodies/ExecutableBlock'
+
+        responses:
+          '204':
+            $ref: '#/components/responses/NoContent'
+
+          '401':
+            $ref: '#/components/responses/UnauthorizedError'
+
+          '403':
+            $ref: '#/components/responses/ForbiddenError'
+
+    /api/v1/executables/{id}/unblock:
+      post:
+        tags:
+        - Remediation
+        summary: Unblock an executable
+        parameters:
+        - $ref: '#/components/parameters/IdOrSha1'
+        - $ref: '#/components/parameters/IdTypeSha1'
+        requestBody:
+          required: false
+          $ref: '#/components/requestBodies/ExecutableUnblock'
+        responses:
+          '204':
+            $ref: '#/components/responses/NoContent'
+
+          '401':
+            $ref: '#/components/responses/UnauthorizedError'
+
+          '403':
+            $ref: '#/components/responses/ForbiddenError'
+
+    /api/v1/machines/{computerId}/isolate:
+      post:
+        tags:
+        - Computers
+        summary: Isolate a computer from the network
+        parameters:
+        - $ref: '#/components/parameters/IdOrUuid'
+        - $ref: '#/components/parameters/IdTypeUuid'
 
         responses:
           '200':
@@ -320,216 +695,9 @@
                 schema:
                   type: object
                   properties:
-                    DETECTION:
-                      type: object
-                      properties:
-                        computerId:
-                            type: integer
-                            
-                        computerName:
-                          type: string
-                          format: hostname
-                          
-                        computerUuid:
-                          type: string
-                          format: uuid
-                          
-                        creationTime:
-                          type: string
-                          format: date-time
-
-                        event:
-                          type: string
-
-                        handled:
-                          type: integer
-                          enum: [0, 1]
-
-                        id:
-                          type: integer
-
-                        moduleFirstSeenLocally:
-                          type: string
-                          format: date-time
-
-                        moduleId:
-                          type: integer
-
-                        moduleLastExecutedLocally:
-                          type: string
-                          format: date-time
-
-                        moduleLgAge:
-                          type: integer
-                          
-                        moduleLgPopularity:
-                          type: integer
-                          
-                        moduleLgReputation:
-                          type: integer
-                          enum: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-                          
-                        moduleName:
-                          type: string
-                          
-                        moduleSha1:
-                          type: string
-
-                        moduleSignatureType:
-                          type: integer
-                          
-                        moduleSigner:
-                          type: string
-
-                        note:
-                          type: string
-
-                        priority:
-                          type: integer
-                          enum: [0, 1, 2, 3]
-
-                        processCommandLine:
-                          type: string
-
-                        processId:
-                          type: integer
-
-                        processPath:
-                          type: string
-
-                        processUser:
-                          type: string
-
-                        resolved:
-                          type: boolean
-
-                        ruleName:
-                          type: string
-
-                        ruleUuid:
-                          type: string
-                          format: uuid                      
-
-                        severity:
-                          type: integer
-                        
-                        severityScore:
-                          type: integer
-
-                        threatName:
-                          type: string
-
-                        threatUri:
-                          type: string
-                          format: uri
-                        
-                        type:
-                          enum: [0, 1, 2, 3, 4, 5, 6, 7]
-
-                        uuid:
-                          type: string
-                          format: uuid
-
-          '401':
-            $ref: '#/components/responses/UnauthorizedError'
-
-      patch:
-        tags: 
-        - Detections
-        summary: Update detection
-        requestBody:
-          required: true
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  resolved:
-                    type: boolean
-
-                  priority:
-                    type: integer
-                    enum: [0, 1, 2, 3]
-
-                  note:
-                    type: string
-                    
-        parameters:
-        - name: 'id'
-          description: Id (or uuid) of the detection to get
-          in: path
-          required: true
-          allowEmptyValue: false
-          schema:
-            type: string
-            
-        - name: '$idType'
-          description: if $idType=uuid {id} in URL is interpreted as uuid of a detection
-          in: query
-          allowEmptyValue: false
-          required: false
-          schema:
-            type: string
-            enum:
-              - uuid
-
-        responses:
-          '204':
-            description: OK
-
-          '401':
-            $ref: '#/components/responses/UnauthorizedError'
-
-    /api/v1/executables/{id}/{action}:
-      post:
-        tags:
-        - Remediation
-        summary: Block or unblock an executable
-        requestBody:
-          required: false
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  clean:
-                    type: boolean
-                  note:
-                    type: string
-
-        parameters:
-        - name: id
-          description: Id (or SHA1) of the executable
-          in: path
-          required: true
-          allowEmptyValue: false
-          schema:
-            type: string
-
-        - name: $idType
-          description: if $idType=sha1 {id} in URL is interpreted as sha1 of a module
-          in: query
-          required: false
-          allowEmptyValue: false
-          schema:
-            type: string
-            enum:
-            - sha1
-
-        - name: action
-          description: Action to perform
-          in: path
-          required: true
-          allowEmptyValue: false
-          schema:
-            type: string
-            enum:
-            - block
-            - unblock
-
-        responses:
-          '204':
-            description: OK
+                    taskUuid:
+                      type: string
+                      format: uuid
 
           '401':
             $ref: '#/components/responses/UnauthorizedError'
@@ -537,40 +705,14 @@
           '403':
             $ref: '#/components/responses/ForbiddenError'
 
-    /api/v1/machines/{computerId}/{action}:
+    /api/v1/machines/{computerId}/integrate:
       post:
         tags:
         - Computers
-        summary: Isolate or integrate a computer from / to the network
+        summary: Integrate a computer back into the network
         parameters:
-        - name: computerId
-          description: Id (or UUID) of the computer
-          in: path
-          required: true
-          allowEmptyValue: false
-          schema:
-            type: string
-
-        - name: $idType
-          description: if $idType=uuid {id} in URL is interpreted as uuid of a computer
-          in: query
-          required: false
-          allowEmptyValue: false
-          schema:
-            type: string
-            enum:
-            - uuid
-
-        - name: action
-          description: Action to perform
-          in: path
-          required: true
-          allowEmptyValue: false
-          schema:
-            type: string
-            enum:
-            - isolate
-            - integrate
+        - $ref: '#/components/parameters/IdOrUuid'
+        - $ref: '#/components/parameters/IdTypeUuid'
 
         responses:
           '200':
@@ -687,6 +829,7 @@
                           severityScore:
                             type: integer
                             maximum: 100
+
                   example:
                     count: 689
                     value:
@@ -812,3 +955,79 @@
         responses:
           '200':
             description: OK
+
+    /api/v1/rules/{id}:
+      get:
+        tags:
+        - Rules
+        summary: Gets a single rule
+        parameters:
+        - $ref: '#/components/parameters/IdOrUuid'
+        - $ref: '#/components/parameters/IdTypeUuid'
+
+        responses:
+          '200':
+            $ref: '#/components/responses/Rule'
+
+          '401':
+            $ref: '#/components/responses/UnauthorizedError'
+
+          '403':
+            $ref: '#/components/responses/ForbiddenError'
+      
+      put:
+        tags:
+        - Rules
+        summary:  Edits rule body
+        parameters:
+        - $ref: '#/components/parameters/IdOrUuid'
+        - $ref: '#/components/parameters/IdTypeUuid'
+
+        responses:
+          '200':
+            $ref: '#/components/responses/Rule'
+
+          '401':
+            $ref: '#/components/responses/UnauthorizedError'
+
+          '403':
+            $ref: '#/components/responses/ForbiddenError'
+
+      delete:
+        tags:
+        - Rules
+        summary:  Deletes a rule
+        parameters:
+        - $ref: '#/components/parameters/IdOrUuid'
+        - $ref: '#/components/parameters/IdTypeUuid'
+
+        responses:
+          '204':
+            $ref: '#/components/responses/NoContent'
+
+          '401':
+            $ref: '#/components/responses/UnauthorizedError'
+
+          '403':
+            $ref: '#/components/responses/ForbiddenError'
+
+      patch:
+        tags:
+        - Rules
+        summary:  Updates particular rule
+        parameters:
+        - $ref: '#/components/parameters/IdOrUuid'
+        - $ref: '#/components/parameters/IdTypeUuid'
+
+        requestBody:
+          $ref: '#/components/requestBodies/UpdateRule'
+
+        responses:
+          '204':
+            $ref: '#/components/responses/NoContent'
+
+          '401':
+            $ref: '#/components/responses/UnauthorizedError'
+
+          '403':
+            $ref: '#/components/responses/ForbiddenError'
