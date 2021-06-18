@@ -132,6 +132,7 @@
                   format: uri
                 
                 type:
+                  type: integer
                   maximum: 8
 
                 uuid:
