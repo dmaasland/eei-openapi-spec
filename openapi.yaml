@@ -278,6 +278,16 @@
           note:
             type: string
 
+      IsolateResponse:
+        type: object
+        properties:
+          taskUuid:
+            type: string
+            format: uuid
+
+      IntegrateResponse:
+        $ref: '#/components/schemas/IsolateResponse'
+
       RuleResponse:
         type: object
         properties:
@@ -431,6 +441,16 @@
             schema:
               $ref: '#/components/schemas/Detection'
 
+      Isolate:
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IsolateResponse'
+
+      Integrate:
+        $ref: '#/components/responses/Isolate'
+
       Rule:
         description: OK
         content:
@@ -529,6 +549,15 @@
           type: string
           enum:
           - sha1
+
+      ComputerIdOrUuid:
+        name: 'computerId'
+        description: Computer ID or UUID
+        in: path
+        required: true
+        allowEmptyValue: false
+        schema:
+          type: string
 
   security:
     - bearerAuth: []
@@ -684,20 +713,12 @@
         - Computers
         summary: Isolate a computer from the network
         parameters:
-        - $ref: '#/components/parameters/IdOrUuid'
+        - $ref: '#/components/parameters/ComputerIdOrUuid'
         - $ref: '#/components/parameters/IdTypeUuid'
 
         responses:
           '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    taskUuid:
-                      type: string
-                      format: uuid
+            $ref: '#/components/responses/Isolate'
 
           '401':
             $ref: '#/components/responses/UnauthorizedError'
@@ -711,20 +732,12 @@
         - Computers
         summary: Integrate a computer back into the network
         parameters:
-        - $ref: '#/components/parameters/IdOrUuid'
+        - $ref: '#/components/parameters/ComputerIdOrUuid'
         - $ref: '#/components/parameters/IdTypeUuid'
 
         responses:
           '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    taskUuid:
-                      type: string
-                      format: uuid
+            $ref: '#/components/responses/Integrate'
 
           '401':
             $ref: '#/components/responses/UnauthorizedError'
