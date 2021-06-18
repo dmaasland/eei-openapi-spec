@@ -338,6 +338,38 @@
           password: eraadmin
           domain: false
 
+      DetectionsResponse:
+        value:
+          value:
+          - computerId: 73
+            computerName: lab-ex-01.lab.local
+            computerUuid: f52b4226-e90a-41e7-add9-0e92a8c97d6d
+            creationTime: '2020-08-14T17:22:02Z'
+            id: 100
+            moduleId: 24
+            moduleLgAge: 731
+            moduleLgPopularity: 7
+            moduleLgReputation: 9
+            moduleName: netsh.exe
+            moduleSha1: DCB637AF92C54162721F1E84CA59D16603FEAB2C
+            moduleSignatureType: 90
+            moduleSigner: Microsoft Windows
+            note: ""
+            priority: 0
+            processCommandLine: interface tcp show global
+            processId: 10000001488
+            processUser: nt authority\system
+            resolved: true
+            ruleId: 552
+            ruleName: System Network Configuration Discovery [F1108a]
+            ruleUuid: d971113d-c9db-44f2-8d6f-bd93564e76d0
+            severity: 1
+            severityScore: 13
+            threatName: ""
+            threatUri: ""
+            type: 1
+            uuid: 14e07368-ce4e-4497-b5a0-31672021d526
+
       RuleResponse:
         value:
           RULE:
@@ -433,6 +465,9 @@
           application/json:
             schema:
               $ref: '#/components/schemas/Detections'
+            examples:
+              DetectionsResponse:
+                $ref: '#/components/examples/DetectionsResponse'
 
       Detection:
         description: OK
