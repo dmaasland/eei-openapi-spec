@@ -449,7 +449,11 @@
               $ref: '#/components/schemas/IsolateResponse'
 
       Integrate:
-        $ref: '#/components/responses/Isolate'
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IntegrateResponse'
 
       Rule:
         description: OK
