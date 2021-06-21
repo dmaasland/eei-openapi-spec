@@ -2,7 +2,7 @@
   info:
     title: ESET Enterprise Inspector
     description: ESET Enterprise Inspector REST API definition
-    version: '1'
+    version: '1.6'
 
   externalDocs:
     url: https://help.eset.com/eei/latest/en-US/api.html
@@ -15,7 +15,13 @@
         bearerFormat: JWT
 
     schemas:
-      Authenticate:
+      UnauthorizedError:
+        type: object
+        properties:
+          error:
+            type: string
+
+      AuthenticateRequest:
         type: object
         properties:
           username:
@@ -26,9 +32,13 @@
           domain:
             type: boolean
 
-      X-Security-Token:
+      AuthTokenResponse:
         type: string
         example: eyJhbGciOi[..]ziJSUGusY5kAI
+
+      LocationResponse:
+        type: string
+        example: https://lab-eei-01.lab.local:443/api/v1/exclusions/5
 
       Detections:
         type: object
@@ -289,6 +299,34 @@
       IntegrateResponse:
         $ref: '#/components/schemas/IsolateResponse'
 
+      RulesResponse:
+        type: object
+        properties:
+          count:
+            type: integer
+            nullable: true
+          value:
+            type: array
+            items:
+              type: object
+              properties:
+                enabled:
+                  type: boolean
+
+                id:
+                  type: integer
+
+                name:
+                  type: string
+
+                severity:
+                  type: integer
+                  enum: [1, 2, 3]
+
+                severityScore:
+                  type: integer
+                  maximum: 100
+
       RuleResponse:
         type: object
         properties:
@@ -320,20 +358,187 @@
                 type: string
                 format: uuid
 
+      RuleCreateRequest:
+        type: object
+        xml:
+          name: rule
+        properties:
+          definition:
+            type: object
+            properties:
+        
+              ancestor:
+                type: object
+                properties:
+                  distance:
+                    type: integer
+                    minimum: 1
+                    xml:
+                      attribute: true
+
+                  unique:
+                    type: boolean
+                    xml:
+                      attribute: true
+        
+              parentprocess:
+                type: object
+        
+              process:
+                type: object
+        
+              operations:
+                type: object
+                properties:
+                  operation:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        xml:
+                          attribute: true
+
+          description:
+            type: object
+            properties:
+              name:
+                type: string
+
+              category:
+                type: string
+
+              explanation:
+                type: string
+
+              os:
+                type: string
+                enum:
+                - Windows
+                - OSX
+                - ANY
+
+              mitreattackid:
+                type: string
+
+              maliciousCauses:
+                type: string
+
+              benignCauses:
+                type: string
+
+              recommendedActions:
+                type: string
+
+          actions:
+            type: object
+            properties:
+              action:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    xml:
+                      attribute: true
+                    enum:
+                    - TriggerDetection
+                    - MarkAsScript
+                    - MarkAsCompromised
+                    - HideCommandLine
+                    - BlockProcessExecutable
+                    - CleanAndBlockProcessExecutable
+                    - BlockParentProcessExecutable
+                    - CleanAndBlockParentProcessExecutable
+                    - IsolateFromNetwork
+                    - DropEvent
+
       UpdateRule:
         type: object
         properties:
           enabled:
             type: boolean
 
+      ExclusionsResponse:
+        type: object
+        properties:
+          count:
+            type: integer
+            nullable: true
+          value:
+            type: array
+            items:
+              type: object
+              properties:
+                enabled:
+                  type: boolean
+
+                id:
+                  type: integer
+
+                name:
+                  type: string
+
+                note:
+                  type: string
+
+                uuid:
+                  type: string
+                  format: uuid
+
+      ExclusionResponse:
+        type: object
+        properties:
+          EXCLUSION:
+            type: object
+            properties:
+              body:
+                type: string
+                format: xml
+
+              enabled:
+                type: boolean
+
+              id:
+                type: integer
+
+              name:
+                type: string
+
+              note:
+                type: string
+
+              ruleIds:
+                type: array
+                items:
+                  type: integer
+
+              ruleUuids:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+
+              uuid:
+                type: string
+                format: uuid
+
+      ExclusionByRuleResponse:
+        type: array
+        items:
+          type: integer
+
     headers:
       X-Security-Token:
         description: Authentication token
         schema:
-          $ref: '#/components/schemas/X-Security-Token'
+          $ref: '#/components/schemas/AuthTokenResponse'
+
+      Location:
+        description: Location of resource
+        schema:
+          $ref: '#/components/schemas/LocationResponse'
 
     examples:
-      Authenticate:
+      AuthenticateRequest:
         value:
           username: Administrator
           password: eraadmin
@@ -371,6 +576,22 @@
             type: 1
             uuid: 14e07368-ce4e-4497-b5a0-31672021d526
 
+      RulesResponse:
+        value:
+          count: 2
+          value:
+            - enabled: true
+              id: 233
+              name: 'Silent execution of PsExec [B0903]'
+              severity: 3
+              severityScore: 81
+
+            - enabled: true
+              id: 234
+              name: 'Clearing event logs [B1001]'
+              severity: 3
+              severityScore: 82
+
       RuleResponse:
         value:
           RULE:
@@ -401,15 +622,67 @@
         value:
           note: 'Investigated, clean'
 
+      ExclusionsResponse:
+        value:
+          count: 2
+          value:
+            - enabled: false
+              id: 9
+              name: 'Adobe, Creative Cloud - [A0103b]'
+              note: 'Adobe Cloud Experience regularly modifies its AutoStart registry key'
+              uuid: 5d029677-276d-4a4c-8c40-1e8e7aaa6d95
+
+            - enabled: true
+              id: 16
+              name: 'Rapid7 - [E1108]'
+              note: 'Exclude reads of Firefox credentials files by Rapid7 IR agent'
+              uuid: 3d427e19-475f-4e0c-a813-420fc6d979f6
+
+      ExclusionResponse:
+        value:
+          EXCLUSION:
+            body: |
+              <?xml version="1.0" encoding="utf-8"?>
+              <rule>
+                <description>
+                  <name>QEMU - [E0502]</name>
+                  <explanation>Exclusion for: Unpopular process makes HTTP request to a popular Web Service [E0502] - Exclude request made by QEMU</explanation>
+                  <category>Exclusion</category>
+                </description>
+                <definition>
+                  <process>
+                    <operator type="AND">
+                      <condition component="Module" property="SignatureType" condition="greaterOrEqual" value="60" />
+                      <condition component="FileItem" property="FileName" condition="is" value="qemu-system-x86_64.exe" />
+                      <condition component="Module" property="SignerName" condition="is" value="Stefan Weil" />
+                    </operator>
+                  </process>
+                </definition>
+              </rule>
+            enabled: true
+            id: 5
+            name: "QEMU - [E0502]"
+            note: "Exclude request made by QEMU - similar to virtualbox/vmware/other virtualization applications"
+            ruleIds:
+            - 391
+            ruleUuids: 
+            - 651d6f43-5ce0-4d1b-b5da-97901f7ae01b
+            uuid: 8cc989e2-578a-4b11-ba17-adbb4d9bc189
+
+      ExclusionByRuleResponse:
+        value:
+          - 90
+
     requestBodies:
       Authenticate:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Authenticate'
+              $ref: '#/components/schemas/AuthenticateRequest'
             examples:
-              Authenticate:
-                $ref: '#/components/examples/Authenticate'
+              AuthenticateRequest:
+                $ref: '#/components/examples/AuthenticateRequest'
 
       UpdateRule:
         content:
@@ -427,6 +700,7 @@
               $ref: '#/components/schemas/DetectionUpdateRequest'
 
       ExecutableBlock:
+        required: false
         content:
           application/json:
             schema:
@@ -436,6 +710,7 @@
                 $ref: '#/components/examples/ExecutableBlock'
 
       ExecutableUnblock:
+        required: false
         content:
           application/json:
             schema:
@@ -446,13 +721,20 @@
 
     responses:
       UnauthorizedError:
-        description: Access token is missing or invalid
+        description: Credentials or access token missing or invalid
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnauthorizedError'
 
       ForbiddenError:
         description: Insufficient permissions to perform action
 
       NoContent:
-        description: No content, indicates success
+        description: No content
+        headers:
+          X-Security-Token:
+            $ref: '#/components/headers/X-Security-Token'
 
       Authenticate:
         description: OK
@@ -462,6 +744,10 @@
 
       Detections:
         description: OK
+        headers:
+          X-Security-Token:
+            $ref: '#/components/headers/X-Security-Token'
+
         content:
           application/json:
             schema:
@@ -472,6 +758,10 @@
 
       Detection:
         description: OK
+        headers:
+          X-Security-Token:
+            $ref: '#/components/headers/X-Security-Token'
+
         content:
           application/json:
             schema:
@@ -479,6 +769,10 @@
 
       Isolate:
         description: OK
+        headers:
+          X-Security-Token:
+            $ref: '#/components/headers/X-Security-Token'
+
         content:
           application/json:
             schema:
@@ -486,13 +780,35 @@
 
       Integrate:
         description: OK
+        headers:
+          X-Security-Token:
+            $ref: '#/components/headers/X-Security-Token'
+
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/IntegrateResponse'
 
+      Rules:
+        description: OK
+        headers:
+          X-Security-Token:
+            $ref: '#/components/headers/X-Security-Token'
+
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RulesResponse'
+            examples:
+              RulesResponse:
+                $ref: '#/components/examples/RulesResponse'
+
       Rule:
         description: OK
+        headers:
+          X-Security-Token:
+            $ref: '#/components/headers/X-Security-Token'
+
         content:
           application/json:
             schema:
@@ -500,6 +816,64 @@
             examples:
               RuleResponse:
                 $ref: '#/components/examples/RuleResponse'
+
+      Exclusions:
+        description: OK
+        headers:
+          X-Security-Token:
+            $ref: '#/components/headers/X-Security-Token'
+
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExclusionsResponse'
+            examples:
+              RulesResponse:
+                $ref: '#/components/examples/ExclusionsResponse'
+
+      ExclusionCreate:
+        description: Created
+        headers:
+          Location:
+            $ref: '#/components/headers/Location'
+          X-Security-Token:
+            $ref: '#/components/headers/X-Security-Token'
+
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExclusionResponse'
+            examples:
+              ExclusionResponse:
+                $ref: '#/components/examples/ExclusionResponse'
+
+      ExclusionGet:
+        description: OK
+        headers:
+          X-Security-Token:
+            $ref: '#/components/headers/X-Security-Token'
+
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExclusionResponse'
+            examples:
+              ExclusionResponse:
+                $ref: '#/components/examples/ExclusionResponse'
+
+      ExclusionsByRule:
+        description: OK
+        headers:
+          X-Security-Token:
+            $ref: '#/components/headers/X-Security-Token'
+
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExclusionByRuleResponse'
+            examples:
+              ExclusionByRuleResponse:
+                $ref: '#/components/examples/ExclusionByRuleResponse'
 
     parameters:
       PaginationTop:
@@ -599,15 +973,33 @@
         schema:
           type: string
 
+      ExclusionIdOrUuid:
+        name: 'exclusionId'
+        description: Exclusion ID or UUID
+        in: path
+        required: true
+        allowEmptyValue: false
+        schema:
+          type: string
+
+      RuleIdOrUuid:
+        name: 'ruleId'
+        description: Rule ID or UUID
+        in: path
+        required: true
+        allowEmptyValue: false
+        schema:
+          type: string
+
   security:
     - bearerAuth: []
     
   servers:
-  - url: https://{baseUrl}
-    variables:
-      baseUrl:
-        default: eei.example.com
-        description: The Enterprise Inspector base URL.
+    - url: https://{baseUrl}
+      variables:
+        baseUrl:
+          default: eei.example.com
+          description: The Enterprise Inspector base URL.
 
   paths:
     /api/v1/authenticate:
@@ -617,7 +1009,6 @@
         summary: Authentication
         security: []
         requestBody:
-          required: true
           $ref: '#/components/requestBodies/Authenticate'
                   
         responses:
@@ -633,7 +1024,6 @@
         summary: Authentication
         security: []
         requestBody:
-          required: true
           $ref: '#/components/requestBodies/Authenticate'
                   
         responses:
@@ -713,7 +1103,6 @@
         - $ref: '#/components/parameters/IdTypeSha1'
 
         requestBody:
-          required: false
           $ref: '#/components/requestBodies/ExecutableBlock'
 
         responses:
@@ -735,7 +1124,6 @@
         - $ref: '#/components/parameters/IdOrSha1'
         - $ref: '#/components/parameters/IdTypeSha1'
         requestBody:
-          required: false
           $ref: '#/components/requestBodies/ExecutableUnblock'
         responses:
           '204':
@@ -790,113 +1178,16 @@
         tags: 
         - Rules
         summary: List rules
-        description: List all rules
         parameters:
-          - name: '$top'
-            description: |
-              system query option requests the number of items in the queried
-              collection to be included in the result
-            in: query
-            allowEmptyValue: false
-            required: false
-            schema:
-              type: integer
-              
-          - name: '$skip'
-            description: |
-              system query option requests the number of items in the queried
-              collection that are to be skipped and not included in the result
-            in: query
-            allowEmptyValue: false
-            required: false
-            schema:
-              type: integer
-              
-          - name: '$count'
-            description: |
-              system query option allows clients to request a count of the 
-              matching resources included with the resources in the response. 
-              if set to $count=1, the number of detections is returned.
-            in: query
-            allowEmptyValue: false
-            required: false
-            schema:
-              type: integer
-              enum:
-              - 0
-              - 1
-              
-          - name: '$orderBy'
-            description: |
-              system query option allows clients to request resources in either
-              ascending order using asc or descending order using desc. If not
-              specified the order is in ascending way
-            in: query
-            allowEmptyValue: false
-            required: false
-            schema:
-              type: string
-
-          - name: '$filter'
-            description: |
-              system query option allows clients to filter a collection of
-              resources that are addressed by a request URL. The query supports
-              the following operators eq, ne, gt, ge, lt, le, and, or, and ().
-              Operators can be combined with values to filter data. For instance,
-              “resolved eq 0” will report only unresolved detections.
-            in: query
-            allowEmptyValue: false
-            required: false
-            schema:
-              type: string
+          - $ref: '#/components/parameters/PaginationTop'
+          - $ref: '#/components/parameters/PaginationSkip'
+          - $ref: '#/components/parameters/PaginationCount'
+          - $ref: '#/components/parameters/PaginationOrderBy'
+          - $ref: '#/components/parameters/PaginationFilter'
               
         responses:
           '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    count:
-                      type: integer
-                      nullable: true
-                    value:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          enabled:
-                            type: boolean
-
-                          id:
-                            type: integer
-
-                          name:
-                            type: string
-
-                          severity:
-                            type: integer
-                            enum: [1, 2, 3]
-
-                          severityScore:
-                            type: integer
-                            maximum: 100
-
-                  example:
-                    count: 689
-                    value:
-                      - enabled: true
-                        id: 233
-                        name: 'Silent execution of PsExec [B0903]'
-                        severity: 3
-                        severityScore: 81
-
-                      - enabled: true
-                        id: 234
-                        name: 'Clearing event logs [B1001]'
-                        severity: 3
-                        severityScore: 82
+            $ref: '#/components/responses/Rules'
 
           '401':
             $ref: '#/components/responses/UnauthorizedError'
@@ -911,99 +1202,7 @@
           content:
             application/xml:
               schema:
-                type: object
-                xml:
-                  name: rule
-                properties:
-                  definition:
-                    type: object
-                    properties:
-                
-                      ancestor:
-                        type: object
-                        properties:
-                          distance:
-                            type: integer
-                            minimum: 1
-                            xml:
-                              attribute: true
-
-                          unique:
-                            type: boolean
-                            xml:
-                              attribute: true
-                
-                      parentprocess:
-                        type: object
-                
-                      process:
-                        type: object
-                
-                      operations:
-                        type: object
-                        properties:
-                          operation:
-                            type: object
-                            properties:
-                              type:
-                                type: string
-                                xml:
-                                  attribute: true
-
-                  description:
-                    type: object
-                    properties:
-                      name:
-                        type: string
-
-                      category:
-                        type: string
-
-                      explanation:
-                        type: string
-
-                      os:
-                        type: string
-                        enum:
-                        - Windows
-                        - OSX
-                        - ANY
-
-                      mitreattackid:
-                        type: string
-
-                      maliciousCauses:
-                        type: string
-
-                      benignCauses:
-                        type: string
-
-                      recommendedActions:
-                        type: string
-
-                  actions:
-                    type: object
-                    properties:
-                      action:
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                            xml:
-                              attribute: true
-                            enum:
-                            - TriggerDetection
-                            - MarkAsScript
-                            - MarkAsCompromised
-                            - HideCommandLine
-                            - BlockProcessExecutable
-                            - CleanAndBlockProcessExecutable
-                            - BlockParentProcessExecutable
-                            - CleanAndBlockParentProcessExecutable
-                            - IsolateFromNetwork
-                            - DropEvent
-
-
+                $ref: '#/components/schemas/RuleCreateRequest'
 
         responses:
           '200':
@@ -1084,3 +1283,96 @@
 
           '403':
             $ref: '#/components/responses/ForbiddenError'
+
+    /api/v1/exclusions:
+      get:
+        tags: 
+        - Exclusions
+        summary: List exclusions
+        parameters:
+          - $ref: '#/components/parameters/PaginationTop'
+          - $ref: '#/components/parameters/PaginationSkip'
+          - $ref: '#/components/parameters/PaginationCount'
+          - $ref: '#/components/parameters/PaginationOrderBy'
+          - $ref: '#/components/parameters/PaginationFilter'
+              
+        responses:
+          '200':
+            $ref: '#/components/responses/Exclusions'
+
+          '401':
+            $ref: '#/components/responses/UnauthorizedError'
+
+      post:
+        tags:
+        - Exclusions
+        summary: Creates a new exclusion
+
+        responses:
+          '201':
+            $ref: '#/components/responses/ExclusionCreate'
+          
+          '401':
+            $ref: '#/components/responses/UnauthorizedError'
+
+    /api/v1/exclusions/{exclusionId}:
+      get:
+        tags:
+        - Exclusions
+        summary: Gets a single exclusion
+        parameters:
+          - $ref: '#/components/parameters/ExclusionIdOrUuid'
+          - $ref: '#/components/parameters/IdTypeUuid'
+
+        responses:
+          '200':
+            $ref: '#/components/responses/ExclusionGet'
+
+          '401':
+            $ref: '#/components/responses/UnauthorizedError'
+
+      put:
+        tags:
+        - Exclusions
+        summary: Edits exclusion body
+        parameters:
+          - $ref: '#/components/parameters/ExclusionIdOrUuid'
+          - $ref: '#/components/parameters/IdTypeUuid'
+        
+        responses:
+          '200':
+            $ref: '#/components/responses/ExclusionCreate'
+        
+          '401':
+            $ref: '#/components/responses/UnauthorizedError'
+
+      delete:
+        tags:
+        - Exclusions
+        summary: Deletes an exclusion
+        parameters:
+          - $ref: '#/components/parameters/ExclusionIdOrUuid'
+          - $ref: '#/components/parameters/IdTypeUuid'
+
+        responses:
+          '204':
+            $ref: '#/components/responses/NoContent'
+        
+          '401':
+            $ref: '#/components/responses/UnauthorizedError'
+
+    /api/v1/exclusions/rule/{ruleId}:
+      get:
+        tags:
+        - Exclusions
+        summary: Get exclusions associated with a rule
+        parameters:
+          - $ref: '#/components/parameters/RuleIdOrUuid'
+          - $ref: '#/components/parameters/IdTypeUuid'
+
+        responses:
+          '200':
+            $ref: '#/components/responses/ExclusionsByRule'
+
+          '401':
+            $ref: '#/components/responses/UnauthorizedError'
