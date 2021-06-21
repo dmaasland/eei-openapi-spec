@@ -399,6 +399,31 @@ components:
       properties:
         enabled:
           type: boolean
+    ExclusionCreateRequest:
+      type: object
+      required:
+      - body
+      - autoResolve
+      - name
+      properties:
+        body:
+          type: string
+          format: xml
+        autoResolve:
+          type: boolean
+        name:
+          type: string
+        ruleIds:
+          type: array
+          items:
+            type: integer
+        ruleUuids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        note:
+          type: string
     ExclusionListResponse:
       type: object
       properties:
@@ -1165,6 +1190,12 @@ paths:
       tags:
         - Exclusions
       summary: Creates a new exclusion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExclusionCreateRequest'
       responses:
         '201':
           $ref: '#/components/responses/ExclusionCreate'
