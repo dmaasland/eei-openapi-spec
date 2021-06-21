@@ -1,0 +1,2363 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "ESET Enterprise Inspector REST API definition",
+    "title": "ESET Enterprise Inspector",
+    "version": "1.6"
+  },
+  "host": "eei.example.com",
+  "basePath": "",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/api/v1/authenticate": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AuthenticateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Security-Token": {
+                "type": "string",
+                "description": "Authentication token"
+              }
+            }
+          },
+          "401": {
+            "description": "Credentials or access token missing or invalid",
+            "schema": {
+              "$ref": "#/definitions/UnauthorizedError"
+            }
+          }
+        },
+        "security": [],
+        "tags": [
+          "Authentication"
+        ],
+        "operationId": "authenticatePost",
+        "summary": "Authentication"
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AuthenticateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Security-Token": {
+                "type": "string",
+                "description": "Authentication token"
+              }
+            }
+          },
+          "401": {
+            "description": "Credentials or access token missing or invalid",
+            "schema": {
+              "$ref": "#/definitions/UnauthorizedError"
+            }
+          }
+        },
+        "security": [],
+        "tags": [
+          "Authentication"
+        ],
+        "operationId": "authenticatePut",
+        "summary": "Authentication"
+      }
+    },
+    "/api/v1/detections": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "allowEmptyValue": false,
+            "description": "system query option requests the number of items in the queried collection to be included in the result",
+            "in": "query",
+            "name": "$top",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "system query option requests the number of items in the queried collection that are to be skipped and not included in the result",
+            "in": "query",
+            "name": "$skip",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "system query option allows clients to request a count of the matching resources included with the resources in the response. if set to $count=1, the number of detections is returned.",
+            "enum": [
+              0,
+              1
+            ],
+            "in": "query",
+            "name": "$count",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "system query option allows clients to request resources in either ascending order using asc or descending order using desc. If not specified the order is in ascending way",
+            "in": "query",
+            "name": "$orderBy",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "system query option allows clients to filter a collection of resources that are addressed by a request URL. The query supports the following operators eq, ne, gt, ge, lt, le, and, or, and (). Operators can be combined with values to filter data. For instance, “resolved eq 0” will report only unresolved detections.",
+            "in": "query",
+            "name": "$filter",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Security-Token": {
+                "type": "string",
+                "description": "Authentication token"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/Detections"
+            }
+          },
+          "401": {
+            "description": "Credentials or access token missing or invalid",
+            "schema": {
+              "$ref": "#/definitions/UnauthorizedError"
+            }
+          }
+        },
+        "tags": [
+          "Detections"
+        ],
+        "operationId": "listDetections",
+        "summary": "List of detections"
+      }
+    },
+    "/api/v1/detections/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "description": "ID or UUID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "if $idType=uuid {id} in URL is interpreted as uuid",
+            "enum": [
+              "uuid"
+            ],
+            "in": "query",
+            "name": "$idType",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Security-Token": {
+                "type": "string",
+                "description": "Authentication token"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/Detection"
+            }
+          },
+          "401": {
+            "description": "Credentials or access token missing or invalid",
+            "schema": {
+              "$ref": "#/definitions/UnauthorizedError"
+            }
+          }
+        },
+        "tags": [
+          "Detections"
+        ],
+        "operationId": "getDetectionDetails",
+        "summary": "Get detection details"
+      },
+      "patch": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "description": "ID or UUID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "if $idType=uuid {id} in URL is interpreted as uuid",
+            "enum": [
+              "uuid"
+            ],
+            "in": "query",
+            "name": "$idType",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DetectionUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content",
+            "headers": {
+              "X-Security-Token": {
+                "type": "string",
+                "description": "Authentication token"
+              }
+            }
+          },
+          "401": {
+            "description": "Credentials or access token missing or invalid",
+            "schema": {
+              "$ref": "#/definitions/UnauthorizedError"
+            }
+          }
+        },
+        "tags": [
+          "Detections"
+        ],
+        "operationId": "updateDetection",
+        "summary": "Update detection"
+      }
+    },
+    "/api/v1/exclusions": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "allowEmptyValue": false,
+            "description": "system query option requests the number of items in the queried collection to be included in the result",
+            "in": "query",
+            "name": "$top",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "system query option requests the number of items in the queried collection that are to be skipped and not included in the result",
+            "in": "query",
+            "name": "$skip",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "system query option allows clients to request a count of the matching resources included with the resources in the response. if set to $count=1, the number of detections is returned.",
+            "enum": [
+              0,
+              1
+            ],
+            "in": "query",
+            "name": "$count",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "system query option allows clients to request resources in either ascending order using asc or descending order using desc. If not specified the order is in ascending way",
+            "in": "query",
+            "name": "$orderBy",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "system query option allows clients to filter a collection of resources that are addressed by a request URL. The query supports the following operators eq, ne, gt, ge, lt, le, and, or, and (). Operators can be combined with values to filter data. For instance, “resolved eq 0” will report only unresolved detections.",
+            "in": "query",
+            "name": "$filter",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Security-Token": {
+                "type": "string",
+                "description": "Authentication token"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ExclusionsResponse"
+            }
+          },
+          "401": {
+            "description": "Credentials or access token missing or invalid",
+            "schema": {
+              "$ref": "#/definitions/UnauthorizedError"
+            }
+          }
+        },
+        "tags": [
+          "Exclusions"
+        ],
+        "operationId": "listExclusions",
+        "summary": "List exclusions"
+      },
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "headers": {
+              "Location": {
+                "type": "string",
+                "description": "Location of resource"
+              },
+              "X-Security-Token": {
+                "type": "string",
+                "description": "Authentication token"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ExclusionResponse"
+            }
+          },
+          "401": {
+            "description": "Credentials or access token missing or invalid",
+            "schema": {
+              "$ref": "#/definitions/UnauthorizedError"
+            }
+          }
+        },
+        "tags": [
+          "Exclusions"
+        ],
+        "operationId": "createExclusion",
+        "summary": "Creates a new exclusion"
+      }
+    },
+    "/api/v1/exclusions/rule/{ruleId}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "description": "Rule ID or UUID",
+            "in": "path",
+            "name": "ruleId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "if $idType=uuid {id} in URL is interpreted as uuid",
+            "enum": [
+              "uuid"
+            ],
+            "in": "query",
+            "name": "$idType",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Security-Token": {
+                "type": "string",
+                "description": "Authentication token"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ExclusionByRuleResponse"
+            }
+          },
+          "401": {
+            "description": "Credentials or access token missing or invalid",
+            "schema": {
+              "$ref": "#/definitions/UnauthorizedError"
+            }
+          }
+        },
+        "tags": [
+          "Exclusions"
+        ],
+        "operationId": "getExclusionsByRule",
+        "summary": "Get exclusions associated with a rule"
+      }
+    },
+    "/api/v1/exclusions/{exclusionId}": {
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "description": "Exclusion ID or UUID",
+            "in": "path",
+            "name": "exclusionId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "if $idType=uuid {id} in URL is interpreted as uuid",
+            "enum": [
+              "uuid"
+            ],
+            "in": "query",
+            "name": "$idType",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content",
+            "headers": {
+              "X-Security-Token": {
+                "type": "string",
+                "description": "Authentication token"
+              }
+            }
+          },
+          "401": {
+            "description": "Credentials or access token missing or invalid",
+            "schema": {
+              "$ref": "#/definitions/UnauthorizedError"
+            }
+          }
+        },
+        "tags": [
+          "Exclusions"
+        ],
+        "operationId": "deleteExclusion",
+        "summary": "Deletes an exclusion"
+      },
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "description": "Exclusion ID or UUID",
+            "in": "path",
+            "name": "exclusionId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "if $idType=uuid {id} in URL is interpreted as uuid",
+            "enum": [
+              "uuid"
+            ],
+            "in": "query",
+            "name": "$idType",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Security-Token": {
+                "type": "string",
+                "description": "Authentication token"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ExclusionResponse"
+            }
+          },
+          "401": {
+            "description": "Credentials or access token missing or invalid",
+            "schema": {
+              "$ref": "#/definitions/UnauthorizedError"
+            }
+          }
+        },
+        "tags": [
+          "Exclusions"
+        ],
+        "operationId": "getExclusionDetails",
+        "summary": "Gets a single exclusion"
+      },
+      "put": {
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "description": "Exclusion ID or UUID",
+            "in": "path",
+            "name": "exclusionId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "if $idType=uuid {id} in URL is interpreted as uuid",
+            "enum": [
+              "uuid"
+            ],
+            "in": "query",
+            "name": "$idType",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Created",
+            "headers": {
+              "Location": {
+                "type": "string",
+                "description": "Location of resource"
+              },
+              "X-Security-Token": {
+                "type": "string",
+                "description": "Authentication token"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ExclusionResponse"
+            }
+          },
+          "401": {
+            "description": "Credentials or access token missing or invalid",
+            "schema": {
+              "$ref": "#/definitions/UnauthorizedError"
+            }
+          }
+        },
+        "tags": [
+          "Exclusions"
+        ],
+        "operationId": "editExclusion",
+        "summary": "Edits exclusion body"
+      }
+    },
+    "/api/v1/executables/{id}/block": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "description": "ID or SHA1",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "if $idType=sha1 {id} in URL is interpreted as SHA1",
+            "enum": [
+              "sha1"
+            ],
+            "in": "query",
+            "name": "$idType",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/ExecutableBlock"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content",
+            "headers": {
+              "X-Security-Token": {
+                "type": "string",
+                "description": "Authentication token"
+              }
+            }
+          },
+          "401": {
+            "description": "Credentials or access token missing or invalid",
+            "schema": {
+              "$ref": "#/definitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions to perform action"
+          }
+        },
+        "tags": [
+          "Remediation"
+        ],
+        "operationId": "blockExecutable",
+        "summary": "Block an executable"
+      }
+    },
+    "/api/v1/executables/{id}/unblock": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "description": "ID or SHA1",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "if $idType=sha1 {id} in URL is interpreted as SHA1",
+            "enum": [
+              "sha1"
+            ],
+            "in": "query",
+            "name": "$idType",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/ExecutableUnblock"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content",
+            "headers": {
+              "X-Security-Token": {
+                "type": "string",
+                "description": "Authentication token"
+              }
+            }
+          },
+          "401": {
+            "description": "Credentials or access token missing or invalid",
+            "schema": {
+              "$ref": "#/definitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions to perform action"
+          }
+        },
+        "tags": [
+          "Remediation"
+        ],
+        "operationId": "unblockExecutable",
+        "summary": "Unblock an executable"
+      }
+    },
+    "/api/v1/machines/{computerId}/integrate": {
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "description": "Computer ID or UUID",
+            "in": "path",
+            "name": "computerId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "if $idType=uuid {id} in URL is interpreted as uuid",
+            "enum": [
+              "uuid"
+            ],
+            "in": "query",
+            "name": "$idType",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Security-Token": {
+                "type": "string",
+                "description": "Authentication token"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/IntegrateResponse"
+            }
+          },
+          "401": {
+            "description": "Credentials or access token missing or invalid",
+            "schema": {
+              "$ref": "#/definitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions to perform action"
+          }
+        },
+        "tags": [
+          "Computers"
+        ],
+        "operationId": "integrateComputer",
+        "summary": "Integrate a computer back into the network"
+      }
+    },
+    "/api/v1/machines/{computerId}/isolate": {
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "description": "Computer ID or UUID",
+            "in": "path",
+            "name": "computerId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "if $idType=uuid {id} in URL is interpreted as uuid",
+            "enum": [
+              "uuid"
+            ],
+            "in": "query",
+            "name": "$idType",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Security-Token": {
+                "type": "string",
+                "description": "Authentication token"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/IsolateResponse"
+            }
+          },
+          "401": {
+            "description": "Credentials or access token missing or invalid",
+            "schema": {
+              "$ref": "#/definitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions to perform action"
+          }
+        },
+        "tags": [
+          "Computers"
+        ],
+        "operationId": "isolateComputer",
+        "summary": "Isolate a computer from the network"
+      }
+    },
+    "/api/v1/rules": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "allowEmptyValue": false,
+            "description": "system query option requests the number of items in the queried collection to be included in the result",
+            "in": "query",
+            "name": "$top",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "system query option requests the number of items in the queried collection that are to be skipped and not included in the result",
+            "in": "query",
+            "name": "$skip",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "system query option allows clients to request a count of the matching resources included with the resources in the response. if set to $count=1, the number of detections is returned.",
+            "enum": [
+              0,
+              1
+            ],
+            "in": "query",
+            "name": "$count",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "system query option allows clients to request resources in either ascending order using asc or descending order using desc. If not specified the order is in ascending way",
+            "in": "query",
+            "name": "$orderBy",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "system query option allows clients to filter a collection of resources that are addressed by a request URL. The query supports the following operators eq, ne, gt, ge, lt, le, and, or, and (). Operators can be combined with values to filter data. For instance, “resolved eq 0” will report only unresolved detections.",
+            "in": "query",
+            "name": "$filter",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Security-Token": {
+                "type": "string",
+                "description": "Authentication token"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/RulesResponse"
+            }
+          },
+          "401": {
+            "description": "Credentials or access token missing or invalid",
+            "schema": {
+              "$ref": "#/definitions/UnauthorizedError"
+            }
+          }
+        },
+        "tags": [
+          "Rules"
+        ],
+        "operationId": "listRules",
+        "summary": "List rules"
+      },
+      "post": {
+        "consumes": [
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuleCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Rules"
+        ],
+        "operationId": "createRule",
+        "summary": "Creates a new rule"
+      }
+    },
+    "/api/v1/rules/{id}": {
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "description": "ID or UUID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "if $idType=uuid {id} in URL is interpreted as uuid",
+            "enum": [
+              "uuid"
+            ],
+            "in": "query",
+            "name": "$idType",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content",
+            "headers": {
+              "X-Security-Token": {
+                "type": "string",
+                "description": "Authentication token"
+              }
+            }
+          },
+          "401": {
+            "description": "Credentials or access token missing or invalid",
+            "schema": {
+              "$ref": "#/definitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions to perform action"
+          }
+        },
+        "tags": [
+          "Rules"
+        ],
+        "operationId": "deleteRule",
+        "summary": "Deletes a rule"
+      },
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "description": "ID or UUID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "if $idType=uuid {id} in URL is interpreted as uuid",
+            "enum": [
+              "uuid"
+            ],
+            "in": "query",
+            "name": "$idType",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Security-Token": {
+                "type": "string",
+                "description": "Authentication token"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/RuleResponse"
+            }
+          },
+          "401": {
+            "description": "Credentials or access token missing or invalid",
+            "schema": {
+              "$ref": "#/definitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions to perform action"
+          }
+        },
+        "tags": [
+          "Rules"
+        ],
+        "operationId": "getRuleDetails",
+        "summary": "Gets a single rule"
+      },
+      "patch": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "description": "ID or UUID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "if $idType=uuid {id} in URL is interpreted as uuid",
+            "enum": [
+              "uuid"
+            ],
+            "in": "query",
+            "name": "$idType",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/UpdateRule"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content",
+            "headers": {
+              "X-Security-Token": {
+                "type": "string",
+                "description": "Authentication token"
+              }
+            }
+          },
+          "401": {
+            "description": "Credentials or access token missing or invalid",
+            "schema": {
+              "$ref": "#/definitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions to perform action"
+          }
+        },
+        "tags": [
+          "Rules"
+        ],
+        "operationId": "updateRule",
+        "summary": "Updates particular rule"
+      },
+      "put": {
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "description": "ID or UUID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "allowEmptyValue": false,
+            "description": "if $idType=uuid {id} in URL is interpreted as uuid",
+            "enum": [
+              "uuid"
+            ],
+            "in": "query",
+            "name": "$idType",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Security-Token": {
+                "type": "string",
+                "description": "Authentication token"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/RuleResponse"
+            }
+          },
+          "401": {
+            "description": "Credentials or access token missing or invalid",
+            "schema": {
+              "$ref": "#/definitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions to perform action"
+          }
+        },
+        "tags": [
+          "Rules"
+        ],
+        "operationId": "editRule",
+        "summary": "Edits rule body"
+      }
+    }
+  },
+  "definitions": {
+    "AuthTokenResponse": {
+      "example": "eyJhbGciOi[..]ziJSUGusY5kAI",
+      "type": "string"
+    },
+    "AuthenticateRequest": {
+      "properties": {
+        "domain": {
+          "type": "boolean"
+        },
+        "pasword": {
+          "format": "password",
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Detection": {
+      "properties": {
+        "DETECTION": {
+          "properties": {
+            "computerId": {
+              "type": "integer"
+            },
+            "computerName": {
+              "format": "hostname",
+              "type": "string"
+            },
+            "computerUuid": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "creationTime": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "event": {
+              "type": "string"
+            },
+            "handled": {
+              "enum": [
+                0,
+                1
+              ],
+              "type": "integer"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "moduleFirstSeenLocally": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "moduleId": {
+              "type": "integer"
+            },
+            "moduleLastExecutedLocally": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "moduleLgAge": {
+              "type": "integer"
+            },
+            "moduleLgPopularity": {
+              "type": "integer"
+            },
+            "moduleLgReputation": {
+              "enum": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "type": "integer"
+            },
+            "moduleName": {
+              "type": "string"
+            },
+            "moduleSha1": {
+              "type": "string"
+            },
+            "moduleSignatureType": {
+              "type": "integer"
+            },
+            "moduleSigner": {
+              "type": "string"
+            },
+            "note": {
+              "type": "string"
+            },
+            "priority": {
+              "enum": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "type": "integer"
+            },
+            "processCommandLine": {
+              "type": "string"
+            },
+            "processId": {
+              "type": "integer"
+            },
+            "processPath": {
+              "type": "string"
+            },
+            "processUser": {
+              "type": "string"
+            },
+            "resolved": {
+              "type": "boolean"
+            },
+            "ruleName": {
+              "type": "string"
+            },
+            "ruleUuid": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "severity": {
+              "type": "integer"
+            },
+            "severityScore": {
+              "type": "integer"
+            },
+            "threatName": {
+              "type": "string"
+            },
+            "threatUri": {
+              "format": "uri",
+              "type": "string"
+            },
+            "type": {
+              "enum": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            "uuid": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "DetectionUpdateRequest": {
+      "properties": {
+        "note": {
+          "type": "string"
+        },
+        "priority": {
+          "maximum": 3,
+          "type": "integer"
+        },
+        "resolved": {
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "Detections": {
+      "properties": {
+        "count": {
+          "type": "integer",
+          "x-nullable": true
+        },
+        "value": {
+          "items": {
+            "properties": {
+              "computerId": {
+                "type": "integer"
+              },
+              "computerName": {
+                "format": "hostname",
+                "type": "string"
+              },
+              "computerUuid": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "creationTime": {
+                "format": "date-time",
+                "type": "string"
+              },
+              "id": {
+                "type": "integer"
+              },
+              "moduleId": {
+                "type": "integer"
+              },
+              "moduleLgAge": {
+                "type": "integer"
+              },
+              "moduleLgPopularity": {
+                "type": "integer"
+              },
+              "moduleLgReputation": {
+                "maximum": 9,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "moduleName": {
+                "type": "string"
+              },
+              "moduleSha1": {
+                "type": "string"
+              },
+              "moduleSignatureType": {
+                "enum": [
+                  60,
+                  70,
+                  75,
+                  80,
+                  90
+                ],
+                "type": "integer"
+              },
+              "moduleSigner": {
+                "type": "string"
+              },
+              "note": {
+                "type": "string"
+              },
+              "priority": {
+                "maximum": 3,
+                "type": "integer"
+              },
+              "processCommandLine": {
+                "type": "string"
+              },
+              "processId": {
+                "type": "integer"
+              },
+              "processUser": {
+                "type": "string"
+              },
+              "resolved": {
+                "type": "boolean"
+              },
+              "ruleId": {
+                "type": "integer"
+              },
+              "ruleName": {
+                "type": "string"
+              },
+              "ruleUuid": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "severity": {
+                "maximum": 3,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "severityScore": {
+                "maximum": 100,
+                "type": "integer"
+              },
+              "threatName": {
+                "type": "string"
+              },
+              "threatUri": {
+                "format": "uri",
+                "type": "string"
+              },
+              "type": {
+                "maximum": 8,
+                "type": "integer"
+              },
+              "uuid": {
+                "format": "uuid",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "ExclusionByRuleResponse": {
+      "items": {
+        "type": "integer"
+      },
+      "type": "array"
+    },
+    "ExclusionResponse": {
+      "properties": {
+        "EXCLUSION": {
+          "properties": {
+            "body": {
+              "format": "xml",
+              "type": "string"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "note": {
+              "type": "string"
+            },
+            "ruleIds": {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            "ruleUuids": {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "uuid": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "ExclusionsResponse": {
+      "properties": {
+        "count": {
+          "type": "integer",
+          "x-nullable": true
+        },
+        "value": {
+          "items": {
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              },
+              "note": {
+                "type": "string"
+              },
+              "uuid": {
+                "format": "uuid",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "ExecutableBlock": {
+      "properties": {
+        "clean": {
+          "type": "boolean"
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ExecutableUnblock": {
+      "properties": {
+        "note": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "IntegrateResponse": {
+      "$ref": "#/definitions/IsolateResponse"
+    },
+    "IsolateResponse": {
+      "properties": {
+        "taskUuid": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "LocationResponse": {
+      "example": "https://lab-eei-01.lab.local:443/api/v1/exclusions/5",
+      "format": "url",
+      "type": "string"
+    },
+    "RuleCreateRequest": {
+      "properties": {
+        "actions": {
+          "properties": {
+            "action": {
+              "properties": {
+                "name": {
+                  "enum": [
+                    "TriggerDetection",
+                    "MarkAsScript",
+                    "MarkAsCompromised",
+                    "HideCommandLine",
+                    "BlockProcessExecutable",
+                    "CleanAndBlockProcessExecutable",
+                    "BlockParentProcessExecutable",
+                    "CleanAndBlockParentProcessExecutable",
+                    "IsolateFromNetwork",
+                    "DropEvent"
+                  ],
+                  "type": "string",
+                  "xml": {
+                    "attribute": true
+                  }
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "definition": {
+          "properties": {
+            "ancestor": {
+              "properties": {
+                "distance": {
+                  "minimum": 1,
+                  "type": "integer",
+                  "xml": {
+                    "attribute": true
+                  }
+                },
+                "unique": {
+                  "type": "boolean",
+                  "xml": {
+                    "attribute": true
+                  }
+                }
+              },
+              "type": "object"
+            },
+            "operations": {
+              "properties": {
+                "operation": {
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "xml": {
+                        "attribute": true
+                      }
+                    }
+                  },
+                  "type": "object"
+                }
+              },
+              "type": "object"
+            },
+            "parentprocess": {
+              "type": "object"
+            },
+            "process": {
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "description": {
+          "properties": {
+            "benignCauses": {
+              "type": "string"
+            },
+            "category": {
+              "type": "string"
+            },
+            "explanation": {
+              "type": "string"
+            },
+            "maliciousCauses": {
+              "type": "string"
+            },
+            "mitreattackid": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "os": {
+              "enum": [
+                "Windows",
+                "OSX",
+                "ANY"
+              ],
+              "type": "string"
+            },
+            "recommendedActions": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object",
+      "xml": {
+        "name": "rule"
+      }
+    },
+    "RuleResponse": {
+      "properties": {
+        "RULE": {
+          "properties": {
+            "body": {
+              "format": "xml",
+              "type": "string"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "severity": {
+              "enum": [
+                1,
+                2,
+                3
+              ],
+              "type": "integer"
+            },
+            "severityScore": {
+              "maximum": 100,
+              "type": "integer"
+            },
+            "uuid": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "RulesResponse": {
+      "properties": {
+        "count": {
+          "type": "integer",
+          "x-nullable": true
+        },
+        "value": {
+          "items": {
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              },
+              "severity": {
+                "enum": [
+                  1,
+                  2,
+                  3
+                ],
+                "type": "integer"
+              },
+              "severityScore": {
+                "maximum": 100,
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "UnauthorizedError": {
+      "properties": {
+        "error": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "UpdateRule": {
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "securityDefinitions": {
+    "bearerAuth": {
+      "in": "header",
+      "name": "Authorization",
+      "type": "apiKey"
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "externalDocs": {
+    "url": "https://help.eset.com/eei/latest/en-US/api.html"
+  },
+  "x-components": {
+    "parameters": {
+      "ComputerIdOrUuid": {
+        "allowEmptyValue": false,
+        "description": "Computer ID or UUID",
+        "in": "path",
+        "name": "computerId",
+        "required": true,
+        "type": "string"
+      },
+      "ExclusionIdOrUuid": {
+        "allowEmptyValue": false,
+        "description": "Exclusion ID or UUID",
+        "in": "path",
+        "name": "exclusionId",
+        "required": true,
+        "type": "string"
+      },
+      "IdOrSha1": {
+        "allowEmptyValue": false,
+        "description": "ID or SHA1",
+        "in": "path",
+        "name": "id",
+        "required": true,
+        "type": "string"
+      },
+      "IdOrUuid": {
+        "allowEmptyValue": false,
+        "description": "ID or UUID",
+        "in": "path",
+        "name": "id",
+        "required": true,
+        "type": "string"
+      },
+      "IdTypeSha1": {
+        "allowEmptyValue": false,
+        "description": "if $idType=sha1 {id} in URL is interpreted as SHA1",
+        "enum": [
+          "sha1"
+        ],
+        "in": "query",
+        "name": "$idType",
+        "required": false,
+        "type": "string"
+      },
+      "IdTypeUuid": {
+        "allowEmptyValue": false,
+        "description": "if $idType=uuid {id} in URL is interpreted as uuid",
+        "enum": [
+          "uuid"
+        ],
+        "in": "query",
+        "name": "$idType",
+        "required": false,
+        "type": "string"
+      },
+      "PaginationCount": {
+        "allowEmptyValue": false,
+        "description": "system query option allows clients to request a count of the matching resources included with the resources in the response. if set to $count=1, the number of detections is returned.",
+        "enum": [
+          0,
+          1
+        ],
+        "in": "query",
+        "name": "$count",
+        "required": false,
+        "type": "integer"
+      },
+      "PaginationFilter": {
+        "allowEmptyValue": false,
+        "description": "system query option allows clients to filter a collection of resources that are addressed by a request URL. The query supports the following operators eq, ne, gt, ge, lt, le, and, or, and (). Operators can be combined with values to filter data. For instance, “resolved eq 0” will report only unresolved detections.",
+        "in": "query",
+        "name": "$filter",
+        "required": false,
+        "type": "string"
+      },
+      "PaginationOrderBy": {
+        "allowEmptyValue": false,
+        "description": "system query option allows clients to request resources in either ascending order using asc or descending order using desc. If not specified the order is in ascending way",
+        "in": "query",
+        "name": "$orderBy",
+        "required": false,
+        "type": "string"
+      },
+      "PaginationSkip": {
+        "allowEmptyValue": false,
+        "description": "system query option requests the number of items in the queried collection that are to be skipped and not included in the result",
+        "in": "query",
+        "name": "$skip",
+        "required": false,
+        "type": "integer"
+      },
+      "PaginationTop": {
+        "allowEmptyValue": false,
+        "description": "system query option requests the number of items in the queried collection to be included in the result",
+        "in": "query",
+        "name": "$top",
+        "required": false,
+        "type": "integer"
+      },
+      "RuleIdOrUuid": {
+        "allowEmptyValue": false,
+        "description": "Rule ID or UUID",
+        "in": "path",
+        "name": "ruleId",
+        "required": true,
+        "type": "string"
+      }
+    },
+    "responses": {
+      "Authenticate": {
+        "description": "OK",
+        "headers": {
+          "X-Security-Token": {
+            "$ref": "#/x-components/headers/X-Security-Token"
+          }
+        }
+      },
+      "Detection": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/definitions/Detection"
+            }
+          }
+        },
+        "description": "OK",
+        "headers": {
+          "X-Security-Token": {
+            "$ref": "#/x-components/headers/X-Security-Token"
+          }
+        }
+      },
+      "Detections": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "DetectionsResponse": {
+                "$ref": "#/x-components/examples/DetectionsResponse"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/Detections"
+            }
+          }
+        },
+        "description": "OK",
+        "headers": {
+          "X-Security-Token": {
+            "$ref": "#/x-components/headers/X-Security-Token"
+          }
+        }
+      },
+      "ExclusionCreate": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "ExclusionResponse": {
+                "$ref": "#/x-components/examples/ExclusionResponse"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ExclusionResponse"
+            }
+          }
+        },
+        "description": "Created",
+        "headers": {
+          "Location": {
+            "$ref": "#/x-components/headers/Location"
+          },
+          "X-Security-Token": {
+            "$ref": "#/x-components/headers/X-Security-Token"
+          }
+        }
+      },
+      "ExclusionGet": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "ExclusionResponse": {
+                "$ref": "#/x-components/examples/ExclusionResponse"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ExclusionResponse"
+            }
+          }
+        },
+        "description": "OK",
+        "headers": {
+          "X-Security-Token": {
+            "$ref": "#/x-components/headers/X-Security-Token"
+          }
+        }
+      },
+      "Exclusions": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "RulesResponse": {
+                "$ref": "#/x-components/examples/ExclusionsResponse"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ExclusionsResponse"
+            }
+          }
+        },
+        "description": "OK",
+        "headers": {
+          "X-Security-Token": {
+            "$ref": "#/x-components/headers/X-Security-Token"
+          }
+        }
+      },
+      "ExclusionsByRule": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "ExclusionByRuleResponse": {
+                "$ref": "#/x-components/examples/ExclusionByRuleResponse"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ExclusionByRuleResponse"
+            }
+          }
+        },
+        "description": "OK",
+        "headers": {
+          "X-Security-Token": {
+            "$ref": "#/x-components/headers/X-Security-Token"
+          }
+        }
+      },
+      "ForbiddenError": {
+        "description": "Insufficient permissions to perform action"
+      },
+      "Integrate": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/definitions/IntegrateResponse"
+            }
+          }
+        },
+        "description": "OK",
+        "headers": {
+          "X-Security-Token": {
+            "$ref": "#/x-components/headers/X-Security-Token"
+          }
+        }
+      },
+      "Isolate": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/definitions/IsolateResponse"
+            }
+          }
+        },
+        "description": "OK",
+        "headers": {
+          "X-Security-Token": {
+            "$ref": "#/x-components/headers/X-Security-Token"
+          }
+        }
+      },
+      "NoContent": {
+        "description": "No content",
+        "headers": {
+          "X-Security-Token": {
+            "$ref": "#/x-components/headers/X-Security-Token"
+          }
+        }
+      },
+      "Rule": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "RuleResponse": {
+                "$ref": "#/x-components/examples/RuleResponse"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/RuleResponse"
+            }
+          }
+        },
+        "description": "OK",
+        "headers": {
+          "X-Security-Token": {
+            "$ref": "#/x-components/headers/X-Security-Token"
+          }
+        }
+      },
+      "Rules": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "RulesResponse": {
+                "$ref": "#/x-components/examples/RulesResponse"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/RulesResponse"
+            }
+          }
+        },
+        "description": "OK",
+        "headers": {
+          "X-Security-Token": {
+            "$ref": "#/x-components/headers/X-Security-Token"
+          }
+        }
+      },
+      "UnauthorizedError": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/definitions/UnauthorizedError"
+            }
+          }
+        },
+        "description": "Credentials or access token missing or invalid"
+      }
+    },
+    "examples": {
+      "AuthenticateRequest": {
+        "value": {
+          "domain": false,
+          "password": "eraadmin",
+          "username": "Administrator"
+        }
+      },
+      "DetectionUpdate": {
+        "value": {
+          "note": "False positive",
+          "priority": 0,
+          "resolved": true
+        }
+      },
+      "DetectionsResponse": {
+        "value": {
+          "value": [
+            {
+              "computerId": 73,
+              "computerName": "lab-ex-01.lab.local",
+              "computerUuid": "f52b4226-e90a-41e7-add9-0e92a8c97d6d",
+              "creationTime": "2020-08-14T17:22:02Z",
+              "id": 100,
+              "moduleId": 24,
+              "moduleLgAge": 731,
+              "moduleLgPopularity": 7,
+              "moduleLgReputation": 9,
+              "moduleName": "netsh.exe",
+              "moduleSha1": "DCB637AF92C54162721F1E84CA59D16603FEAB2C",
+              "moduleSignatureType": 90,
+              "moduleSigner": "Microsoft Windows",
+              "note": "",
+              "priority": 0,
+              "processCommandLine": "interface tcp show global",
+              "processId": 10000001488,
+              "processUser": "nt authority\\system",
+              "resolved": true,
+              "ruleId": 552,
+              "ruleName": "System Network Configuration Discovery [F1108a]",
+              "ruleUuid": "d971113d-c9db-44f2-8d6f-bd93564e76d0",
+              "severity": 1,
+              "severityScore": 13,
+              "threatName": "",
+              "threatUri": "",
+              "type": 1,
+              "uuid": "14e07368-ce4e-4497-b5a0-31672021d526"
+            }
+          ]
+        }
+      },
+      "ExclusionByRuleResponse": {
+        "value": [
+          90
+        ]
+      },
+      "ExclusionResponse": {
+        "value": {
+          "EXCLUSION": {
+            "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<rule>\n  <description>\n    <name>QEMU - [E0502]</name>\n    <explanation>Exclusion for: Unpopular process makes HTTP request to a popular Web Service [E0502] - Exclude request made by QEMU</explanation>\n    <category>Exclusion</category>\n  </description>\n  <definition>\n    <process>\n      <operator type=\"AND\">\n        <condition component=\"Module\" property=\"SignatureType\" condition=\"greaterOrEqual\" value=\"60\" />\n        <condition component=\"FileItem\" property=\"FileName\" condition=\"is\" value=\"qemu-system-x86_64.exe\" />\n        <condition component=\"Module\" property=\"SignerName\" condition=\"is\" value=\"Stefan Weil\" />\n      </operator>\n    </process>\n  </definition>\n</rule>\n",
+            "enabled": true,
+            "id": 5,
+            "name": "QEMU - [E0502]",
+            "note": "Exclude request made by QEMU - similar to virtualbox/vmware/other virtualization applications",
+            "ruleIds": [
+              391
+            ],
+            "ruleUuids": [
+              "651d6f43-5ce0-4d1b-b5da-97901f7ae01b"
+            ],
+            "uuid": "8cc989e2-578a-4b11-ba17-adbb4d9bc189"
+          }
+        }
+      },
+      "ExclusionsResponse": {
+        "value": {
+          "count": 2,
+          "value": [
+            {
+              "enabled": false,
+              "id": 9,
+              "name": "Adobe, Creative Cloud - [A0103b]",
+              "note": "Adobe Cloud Experience regularly modifies its AutoStart registry key",
+              "uuid": "5d029677-276d-4a4c-8c40-1e8e7aaa6d95"
+            },
+            {
+              "enabled": true,
+              "id": 16,
+              "name": "Rapid7 - [E1108]",
+              "note": "Exclude reads of Firefox credentials files by Rapid7 IR agent",
+              "uuid": "3d427e19-475f-4e0c-a813-420fc6d979f6"
+            }
+          ]
+        }
+      },
+      "ExecutableBlock": {
+        "value": {
+          "clean": true,
+          "note": "Ransomware"
+        }
+      },
+      "ExecutableUnblock": {
+        "value": {
+          "note": "Investigated, clean"
+        }
+      },
+      "RuleResponse": {
+        "value": {
+          "RULE": {
+            "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?><rule><description><os>Windows</os><mitreattackid/><explanation/><maliciousCauses/><benignCauses/><recommendedActions/><name>Script interpreters detection (PowerShell/wscript) [X9901]</name><category>Special/system rules</category><guid>3FF756E1-6B54-4729-AE0D-318181D751A5</guid></description><definition><process><operator type=\"OR\"><condition component=\"FileItem\" property=\"FileName\" condition=\"is\" value=\"wscript.exe\"/><condition component=\"FileItem\" property=\"FileName\" condition=\"is\" value=\"powershell.exe\"/><condition component=\"Module\" property=\"OriginalFileName\" condition=\"starts\" value=\"wscript.exe\"/><condition component=\"Module\" property=\"OriginalFileName\" condition=\"starts\" value=\"powershell.exe\"/></operator></process></definition><action>MarkAsScript</action></rule>",
+            "enabled": true,
+            "id": 594,
+            "name": "Script interpreters detection (PowerShell/wscript) [X9901]",
+            "severity": 2,
+            "severityScore": 60,
+            "uuid": "3ff756e1-6b54-4729-ae0d-318181d751a5"
+          }
+        }
+      },
+      "RulesResponse": {
+        "value": {
+          "count": 2,
+          "value": [
+            {
+              "enabled": true,
+              "id": 233,
+              "name": "Silent execution of PsExec [B0903]",
+              "severity": 3,
+              "severityScore": 81
+            },
+            {
+              "enabled": true,
+              "id": 234,
+              "name": "Clearing event logs [B1001]",
+              "severity": 3,
+              "severityScore": 82
+            }
+          ]
+        }
+      },
+      "UpdateRule": {
+        "value": {
+          "enabled": false
+        }
+      }
+    },
+    "headers": {
+      "Location": {
+        "description": "Location of resource",
+        "schema": {
+          "$ref": "#/definitions/LocationResponse"
+        }
+      },
+      "X-Security-Token": {
+        "description": "Authentication token",
+        "schema": {
+          "$ref": "#/definitions/AuthTokenResponse"
+        }
+      }
+    },
+    "requestBodies": {
+      "Authenticate": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "AuthenticateRequest": {
+                "$ref": "#/x-components/examples/AuthenticateRequest"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/AuthenticateRequest"
+            }
+          }
+        },
+        "required": true
+      },
+      "DetectionUpdate": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/definitions/DetectionUpdateRequest"
+            }
+          }
+        }
+      },
+      "ExecutableBlock": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "ExecutableBlock": {
+                "$ref": "#/x-components/examples/ExecutableBlock"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ExecutableBlock"
+            }
+          }
+        },
+        "required": false
+      },
+      "ExecutableUnblock": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "ExecutableUnblock": {
+                "$ref": "#/x-components/examples/ExecutableUnblock"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ExecutableUnblock"
+            }
+          }
+        },
+        "required": false
+      },
+      "UpdateRule": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "UpdateRule": {
+                "$ref": "#/x-components/examples/UpdateRule"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/UpdateRule"
+            }
+          }
+        }
+      }
+    }
+  }
+}
