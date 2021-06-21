@@ -39,6 +39,7 @@
       LocationResponse:
         type: string
         example: https://lab-eei-01.lab.local:443/api/v1/exclusions/5
+        format: url
 
       Detections:
         type: object
@@ -1004,9 +1005,11 @@
   paths:
     /api/v1/authenticate:
       put:
+        operationId: authenticatePut
         tags: 
         - Authentication
         summary: Authentication
+        description: Authenticate
         security: []
         requestBody:
           $ref: '#/components/requestBodies/Authenticate'
@@ -1019,9 +1022,11 @@
             $ref: '#/components/responses/UnauthorizedError'
 
       post:
+        operationId: authenticatePost
         tags: 
         - Authentication
         summary: Authentication
+        description: Authenticate
         security: []
         requestBody:
           $ref: '#/components/requestBodies/Authenticate'
@@ -1035,6 +1040,7 @@
 
     /api/v1/detections:
       get:
+        operationId: listDetections
         tags: 
         - Detections
         summary: List of detections
@@ -1054,6 +1060,7 @@
 
     /api/v1/detections/{id}:
       get:
+        operationId: getDetectionDetails
         tags: 
         - Detections
         summary: Get detection details
@@ -1069,6 +1076,7 @@
             $ref: '#/components/responses/UnauthorizedError'
 
       patch:
+        operationId: updateDetection
         tags: 
         - Detections
         summary: Update detection
@@ -1095,6 +1103,7 @@
 
     /api/v1/executables/{id}/block:
       post:
+        operationId: blockExecutable
         tags:
         - Remediation
         summary: Block an executable
@@ -1117,6 +1126,7 @@
 
     /api/v1/executables/{id}/unblock:
       post:
+        operationId: unblockExecutable
         tags:
         - Remediation
         summary: Unblock an executable
@@ -1137,6 +1147,7 @@
 
     /api/v1/machines/{computerId}/isolate:
       post:
+        operationId: isolateComputer
         tags:
         - Computers
         summary: Isolate a computer from the network
@@ -1156,6 +1167,7 @@
 
     /api/v1/machines/{computerId}/integrate:
       post:
+        operationId: integrateComputer
         tags:
         - Computers
         summary: Integrate a computer back into the network
@@ -1175,6 +1187,7 @@
 
     /api/v1/rules:
       get:
+        operationId: listRules
         tags: 
         - Rules
         summary: List rules
@@ -1193,6 +1206,7 @@
             $ref: '#/components/responses/UnauthorizedError'
 
       post:
+        operationId: createRule
         tags:
         - Rules
         summary: Creates a new rule
@@ -1210,6 +1224,7 @@
 
     /api/v1/rules/{id}:
       get:
+        operationId: getRuleDetails
         tags:
         - Rules
         summary: Gets a single rule
@@ -1228,6 +1243,7 @@
             $ref: '#/components/responses/ForbiddenError'
       
       put:
+        operationId: editRule
         tags:
         - Rules
         summary:  Edits rule body
@@ -1246,6 +1262,7 @@
             $ref: '#/components/responses/ForbiddenError'
 
       delete:
+        operationId: deleteRule
         tags:
         - Rules
         summary:  Deletes a rule
@@ -1264,6 +1281,7 @@
             $ref: '#/components/responses/ForbiddenError'
 
       patch:
+        operationId: updateRule
         tags:
         - Rules
         summary:  Updates particular rule
@@ -1286,6 +1304,7 @@
 
     /api/v1/exclusions:
       get:
+        operationId: listExclusions
         tags: 
         - Exclusions
         summary: List exclusions
@@ -1304,6 +1323,7 @@
             $ref: '#/components/responses/UnauthorizedError'
 
       post:
+        operationId: createExclusion
         tags:
         - Exclusions
         summary: Creates a new exclusion
@@ -1317,6 +1337,7 @@
 
     /api/v1/exclusions/{exclusionId}:
       get:
+        operationId: getExclusionDetails
         tags:
         - Exclusions
         summary: Gets a single exclusion
@@ -1332,6 +1353,7 @@
             $ref: '#/components/responses/UnauthorizedError'
 
       put:
+        operationId: editExclusion
         tags:
         - Exclusions
         summary: Edits exclusion body
@@ -1347,6 +1369,7 @@
             $ref: '#/components/responses/UnauthorizedError'
 
       delete:
+        operationId: deleteExclusion
         tags:
         - Exclusions
         summary: Deletes an exclusion
@@ -1363,6 +1386,7 @@
 
     /api/v1/exclusions/rule/{ruleId}:
       get:
+        operationId: getExclusionsByRule
         tags:
         - Exclusions
         summary: Get exclusions associated with a rule
