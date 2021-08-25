@@ -1000,7 +1000,7 @@ components:
         system query option allows clients to filter a collection of resources
         that are addressed by a request URL. The query supports the following
         operators eq, ne, gt, ge, lt, le, and, or, and (). Operators can be
-        combined with values to filter data. For instance, “resolved eq 0” will
+        combined with values to filter data. For instance, "resolved eq 0" will
         report only unresolved detections.
       in: query
       allowEmptyValue: false
